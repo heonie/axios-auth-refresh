@@ -13,6 +13,13 @@ import {
 
 export { AxiosAuthRefreshOptions, AxiosAuthRefreshRequestConfig } from './model';
 
+
+const cache: AxiosAuthRefreshCache = {
+    skipInstances: [],
+    refreshCall: undefined,
+    requestQueueInterceptorId: undefined,
+};
+
 /**
  * Creates an authentication refresh interceptor that binds to any error response.
  * If the response status code is one of the options.statusCodes, interceptor calls the refreshAuthCall
@@ -36,12 +43,6 @@ export default function createAuthRefreshInterceptor(
     if (typeof refreshAuthCall !== 'function') {
         throw new Error('axios-auth-refresh requires `refreshAuthCall` to be a function that returns a promise.');
     }
-
-    const cache: AxiosAuthRefreshCache = {
-        skipInstances: [],
-        refreshCall: undefined,
-        requestQueueInterceptorId: undefined,
-    };
 
     return instance.interceptors.response.use(
         (response: AxiosResponse) => response,
